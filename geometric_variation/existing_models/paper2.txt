@@ -1,0 +1,125 @@
+// IRRELEVANT PAPER //
+
+============================================================
+2. To Match or Not to Match: Revisiting Image Matching for Reliable Visual Place Recognition
+============================================================
+
+Name:
+To Match or Not to Match: Revisiting Image Matching for Reliable Visual Place Recognition
+
+Authors:
+Davide Sferrazza et al., CVPR Workshops 2025
+
+Why this paper is important for us:
+This is not a lunar-registration paper. Its value for us is its broad comparison of modern image matching methods and its analysis of when image correspondences are actually geometrically trustworthy.
+
+Their pipeline is essentially:
+Image retrieval → candidate images → image matching → RANSAC/geometric verification → count inliers → confidence / verification
+
+They evaluate modern methods including:
+- SuperGlue
+- LoFTR
+- LightGlue
+- RoMa
+- Tiny-RoMa
+- Affine Steerers
+- MASt3R
+- DUSt3R
+- Patch2Pix
+- MatchFormer
+- xFeat
+- GIM variants
+- Other modern matchers
+
+------------------------------------------------------------
+Geometric variation handling
+------------------------------------------------------------
+
+1) SuperGlue
+
+Uses feature descriptors plus graph neural-network reasoning.
+
+Handles:
+- Viewpoint changes
+- Partial appearance changes
+- Difficult feature correspondences
+
+The important idea is global contextual matching rather than simply comparing descriptors independently.
+
+
+2) LoFTR — important for us
+
+LoFTR is detector-free.
+
+Traditional approach:
+Keypoint detection → descriptor extraction → descriptor matching
+
+LoFTR instead establishes correspondences through transformer-based global context.
+
+This can help when:
+- There are few strong keypoints
+- Texture is weak
+- Local descriptors are ambiguous
+
+This is potentially useful for the Moon because large parts of lunar terrain can have weak or repetitive texture.
+
+
+3) RoMa / Tiny-RoMa
+
+These are modern dense correspondence approaches.
+
+Instead of producing only a small number of strong keypoint matches, they can provide much denser correspondence information.
+
+Conceptually:
+Image A → dense correspondence field → Image B
+
+This is interesting for our requirement of uniformly distributed match points because dense methods can potentially provide correspondences across regions where sparse keypoint methods would return almost nothing.
+
+
+4) Affine Steerers
+
+These explicitly improve robustness to affine transformations.
+
+They are therefore useful for:
+- Rotation
+- Scale
+- Viewpoint-induced affine deformation
+
+This is particularly relevant when the same lunar feature appears stretched or skewed because of different observation angles.
+
+
+5) DUSt3R / MASt3R — very important conceptually
+
+These methods go beyond pure 2D matching and introduce 3D reasoning.
+
+Instead of simply learning:
+
+    (x1, y1) → (x2, y2)
+
+the system can reason more like:
+
+    (x1, y1) → (X, Y, Z) → (x2, y2)
+
+This is conceptually much closer to the actual lunar problem.
+
+Because the Moon is 3D, 3D-aware registration can potentially model terrain-induced parallax much better than a single homography.
+
+------------------------------------------------------------
+Major finding from this paper
+------------------------------------------------------------
+
+High inlier count does NOT necessarily mean correct registration.
+
+The paper shows situations where an incorrect image correspondence can obtain many geometrically consistent matches.
+
+Therefore:
+
+    High inlier count ≠ guaranteed correct registration
+
+This is highly relevant to lunar imagery because:
+- Crater shapes repeat
+- Ridges repeat
+- Terrain patterns can be visually similar
+- Shadows can create misleading structures
+
+This creates a risk of false correspondences / perceptual aliasing.

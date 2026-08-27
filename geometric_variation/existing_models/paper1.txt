@@ -1,0 +1,166 @@
+============================================================
+1. Comparative Evaluation of Traditional and Deep Learning Feature Matching Algorithms using Chandrayaan-2 Lunar Data
+============================================================
+
+Name:
+Comparative Evaluation of Traditional and Deep Learning Feature Matching Algorithms using Chandrayaan-2 Lunar Data
+
+Authors:
+R. Makharia et al.
+
+Why this paper is important for us:
+This is the most directly relevant paper because it evaluates image matching and registration using Chandrayaan-2 and other lunar datasets.
+
+Their pipeline is essentially:
+Georeferencing → resolution alignment → intensity normalization → sensor-specific enhancement → feature detection/description → feature matching → RANSAC → homography estimation → image warping → coordinate integration
+
+They evaluate:
+- SIFT
+- ASIFT
+- AKAZE
+- RIFT2
+- SuperGlue
+
+------------------------------------------------------------
+Geometric / appearance variation handling
+------------------------------------------------------------
+
+1) Scale-Invariant Feature Transform (SIFT)
+
+SIFT constructs a scale-space using Difference-of-Gaussians and detects keypoints at different scales.
+
+It assigns an orientation to each keypoint and creates a local descriptor around it.
+
+Therefore, it provides robustness to:
+- Scale variation
+- Rotation
+- Translation
+
+But it is not designed to handle severe affine/projective viewpoint changes.
+
+Important for us:
+SIFT is useful for ordinary scale changes, but lunar images can have much stronger viewpoint and imaging-geometry differences.
+
+
+2) Affine-SIFT (ASIFT)
+
+ASIFT extends SIFT by explicitly simulating different camera viewing directions.
+
+It generates multiple affine-transformed versions of the image by varying:
+- Tilt
+- Rotation
+
+and then applies SIFT to those simulated images.
+
+Conceptually:
+Original image → simulated viewpoint/tilt changes → SIFT → combine matches
+
+Therefore ASIFT is more robust to:
+- Scale variation
+- Rotation
+- Affine/viewpoint variation
+
+This makes ASIFT more suitable than ordinary SIFT when two lunar images are acquired from significantly different viewing geometries.
+
+Limitation:
+The additional simulated views increase computational cost substantially.
+
+
+3) RIFT2 — highly relevant for us
+
+RIFT2 is designed to be more robust to radiometric/illumination differences.
+
+It uses:
+- Phase congruency
+- Local structural information
+- Maximum Index Map (MIM) descriptors
+
+Instead of depending heavily on absolute pixel intensity, it captures structural information that remains more stable when image brightness changes.
+
+Therefore RIFT2 is useful for:
+- Illumination variation
+- Nonlinear radiometric differences
+- Cross-sensor appearance differences
+
+This is especially relevant to lunar imagery because the same terrain can look dramatically different under different solar illumination conditions.
+
+But:
+RIFT2's robustness to radiometric variation does not mean it completely solves large geometric/viewpoint distortion.
+
+
+4) AKAZE
+
+AKAZE constructs a nonlinear scale-space using nonlinear diffusion.
+
+It provides:
+- Scale robustness
+- Rotation robustness
+- Relatively efficient feature extraction
+
+However, under severe scale and geometric distortions, its performance degrades.
+
+
+5) SuperGlue
+
+SuperGlue uses deep neural networks / graph-based reasoning to match detected features between two images.
+
+Instead of independently matching every descriptor, it reasons about relationships between features and performs a globally more consistent assignment.
+
+This helps under:
+- Viewpoint changes
+- Difficult illumination
+- Visually ambiguous regions
+- Cross-sensor differences
+
+The paper reports that SuperGlue generally gives the strongest registration results among the tested methods on their lunar datasets.
+
+------------------------------------------------------------
+Geometric estimation used after matching
+------------------------------------------------------------
+
+After obtaining candidate correspondences, they use:
+
+RANSAC → Homography
+
+The homography is a 3×3 projective transformation:
+
+    x' ~ Hx
+
+It can represent:
+- Translation
+- Rotation
+- Scale
+- Affine-like changes
+- Perspective/projective distortion
+
+Therefore, their system handles a substantial amount of 2D geometric variation.
+
+------------------------------------------------------------
+Major problem with their geometric model
+------------------------------------------------------------
+
+A homography assumes an effectively planar scene.
+
+But the Moon is a 3D surface, not a plane.
+
+It contains:
+- Craters
+- Crater walls
+- Ridges
+- Mountains
+- Valleys
+- Slopes
+- Different elevations
+
+When the source and reference images are captured from different viewing geometries, objects at different elevations undergo different image displacements.
+
+Therefore:
+
+same terrain point → different displacement depending on depth
+
+This creates terrain-induced parallax.
+
+A single global homography H cannot perfectly model this spatially varying displacement.
+
+Example:
+A flat region may align very well, while a crater wall or mountain can still have significantly larger residual error even though the overall homography RMSE looks good.

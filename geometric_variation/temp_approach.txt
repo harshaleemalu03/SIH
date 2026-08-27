@@ -1,0 +1,203 @@
+WHAT WE CAN DO
+===============
+
+1. SCALE VARIATION
+------------------
+
+Lunar images can be captured at different altitudes and spatial resolutions, so the same feature can appear at very different sizes.
+
+Example:
+
+Source image:
+    Large crater
+
+Reference image:
+    Same crater, but much smaller
+
+Approach:
+
+- Use multi-scale image processing / image pyramids.
+- Run the correspondence matcher at different image scales.
+- Combine reliable correspondences obtained at different scales.
+
+Conceptually:
+
+Source + Reference
+        ↓
+Multiple image scales
+        ↓
+Neural matcher
+        ↓
+Correspondences at different scales
+        ↓
+Reliable matches
+
+This allows the system to find the same physical feature even when the source and reference images have different resolutions or zoom levels.
+
+
+2. VIEWPOINT VARIATION
+----------------------
+
+The source and reference images may have been captured from different camera positions or orientations.
+
+This can cause:
+
+- Translation
+- Rotation
+- Scaling
+- Stretching
+- Affine distortion
+- Perspective distortion
+
+The same crater or ridge may therefore look different in the two images.
+
+Approach:
+
+Use a modern neural correspondence model such as:
+
+- LoFTR
+- RoMa
+- LightGlue + SuperPoint
+
+The neural network receives the source and reference images and produces candidate correspondences:
+
+Source point                     Reference point
+
+(x1, y1)  ------------------>   (x2, y2)
+(x3, y3)  ------------------>   (x4, y4)
+(x5, y5)  ------------------>   (x6, y6)
+
+The neural network's main job is:
+
+"Which location in the source corresponds to which location in the reference?"
+
+It is not necessary for the neural network to perform the complete image registration.
+
+
+3. GEOMETRIC CONSISTENCY CHECK
+------------------------------
+
+The neural matcher can produce incorrect correspondences.
+
+Example:
+
+Match 1    CORRECT
+Match 2    CORRECT
+Match 3    WRONG
+Match 4    CORRECT
+Match 5    WRONG
+
+Therefore, candidate matches must be geometrically verified.
+
+Approach:
+
+Neural matcher
+      ↓
+Candidate correspondences
+      ↓
+Geometric consistency check
+      ↓
+Remove inconsistent matches
+      ↓
+Reliable correspondences
+
+RANSAC can be used for this filtering stage.
+
+Important:
+
+RANSAC is being used to identify geometrically inconsistent correspondences. It does NOT mean that one global homography is assumed to perfectly describe the entire Moon.
+
+
+4. GLOBAL HOMOGRAPHY — ONLY AS A BASELINE / COARSE MODEL
+--------------------------------------------------------
+
+A homography can model:
+
+- Translation
+- Rotation
+- Scale
+- Affine-like changes
+- Perspective/projective distortion
+
+Therefore, it can be useful for:
+
+- Initial/coarse alignment
+- Baseline comparison
+- Geometric consistency checking
+
+However, a single global homography is not an ideal final model for the lunar surface.
+
+Reason:
+
+The Moon is a 3D surface containing:
+
+- Craters
+- Crater walls
+- Mountains
+- Valleys
+- Ridges
+- Slopes
+- Different elevations
+
+When the viewing angle changes, points at different elevations can experience different image displacements.
+
+Therefore:
+
+Same terrain point → spatial displacement
+
+can vary depending on local terrain elevation.
+
+A single global homography assumes one transformation for all points and therefore cannot perfectly model terrain-induced parallax.
+
+Thus:
+
+Global homography = baseline / coarse geometry
+
+not:
+
+Global homography = complete lunar geometric model
+
+
+5. LOCAL / TERRAIN-AWARE GEOMETRY
+---------------------------------
+
+If experiments show that the global homography leaves systematic local errors, we can investigate more flexible geometric models.
+
+Possible approaches:
+
+- Piecewise/local transformations
+- Local homographies
+- DEM-aware geometric correction
+- 3D terrain-based projection
+
+However, this is not required for the first prototype.
+
+The first goal should be to determine how well modern neural correspondence methods perform before introducing more complicated geometric models.
+
+
+6. SUB-PIXEL REFINEMENT
+-----------------------
+
+After obtaining reliable correspondences, refine their locations more precisely.
+
+Example:
+
+Initial neural match:
+
+Source     = (523.0, 421.0)
+Reference  = (817.0, 391.0)
+
+After local refinement:
+
+Source     = (523.37, 420.74)
+Reference  = (817.41, 390.63)
+
+Possible local refinement techniques:
+
+- Phase correlation
+- ECC
+- Lucas-Kanade
+- Local normalized cross-correlation
+- Other numerical local optimization methods
+
+The neural network provides the approximate correspondence, while the refinement stage obtains the final sub-pixel position.

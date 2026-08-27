@@ -1,0 +1,126 @@
+============================================================
+3. Towards Seamless Lunar Mosaics: Deep Radiometric Normalization for Cross-Sensor Orbital Imagery Using Chandrayaan-2 TMC Data
+============================================================
+
+Name:
+Towards Seamless Lunar Mosaics: Deep Radiometric Normalization for Cross-Sensor Orbital Imagery Using Chandrayaan-2 TMC Data
+
+Authors:
+Pratincha Singh et al., 2026
+
+Their pipeline is essentially:
+Raw lunar imagery → CLAHE preprocessing → patch extraction → cGAN/U-Net normalization → PatchGAN discrimination → overlap-aware reconstruction → normalized mosaic
+
+The target radiometric distribution is based on LROC WAC imagery, with Chandrayaan-2 TMC and SELENE imagery used as source data.
+
+------------------------------------------------------------
+Geometric / appearance variation handling
+------------------------------------------------------------
+
+Important distinction:
+This paper primarily handles radiometric variation, not geometric variation.
+
+
+1) Illumination variation
+
+The input imagery can have different:
+- Solar illumination angles
+- Brightness
+- Contrast
+- Exposure characteristics
+- Sensor responses
+
+These produce strong tonal differences even when the underlying terrain is the same.
+
+Their model learns a nonlinear mapping:
+
+    I_hat = G(I)
+
+where:
+- I = input image
+- G = learned generator
+- I_hat = radiometrically normalized image
+
+
+2) cGAN + U-Net
+
+The generator uses U-Net.
+
+U-Net is useful because it preserves spatial details through skip connections while learning multi-scale representations.
+
+The idea is:
+
+Input lunar patch → encoder → multi-scale features → decoder → normalized patch
+
+
+3) PatchGAN
+
+The discriminator operates on local patches instead of judging only the entire image.
+
+This encourages:
+- Local tonal consistency
+- High-frequency consistency
+- Seam reduction
+
+The paper combines adversarial loss with L1 reconstruction loss.
+
+------------------------------------------------------------
+How does it handle scale?
+------------------------------------------------------------
+
+The paper uses fixed patches:
+- 512 × 512
+- 1024 × 1024
+
+and overlapping patch inference for large mosaics.
+
+However, this is primarily for computational scalability, not geometric scale invariance.
+
+Important distinction:
+Patch scaling ≠ solving image-scale variation between sensors.
+
+------------------------------------------------------------
+Major limitation for our geometric problem
+------------------------------------------------------------
+
+It does NOT solve geometric registration.
+
+Its objective is essentially:
+
+    Source image → radiometrically normalized source image
+
+not:
+
+    (x, y)_source → (x', y')_reference
+
+Therefore it does not solve:
+- Viewpoint variation
+- Rotation
+- Geometric distortion
+- Perspective distortion
+- Terrain parallax
+- Geometric misalignment
+- Sub-pixel tie-point estimation
+
+------------------------------------------------------------
+Other limitations for our SIH problem
+------------------------------------------------------------
+
+1. Fixed patch size
+The model uses 512×512 or 1024×1024 patches.
+This may not fully capture very large-scale illumination gradients.
+
+2. Dependence on radiometric reference
+Their normalization target is derived from LROC WAC data.
+A generic registration system should ideally not require a particular mission's radiometric reference every time.
+
+3. No geometric matching
+It does not produce source-reference correspondences:
+
+    (xs, ys) ↔ (xr, yr)
+
+4. No sub-pixel registration
+There is no dedicated geometric refinement stage to achieve sub-pixel correspondence precision.
+
+Main research gap from Paper 3:
+Excellent solution for lunar radiometric/illumination inconsistency, but it stops before the actual geometric-registration problem. It can be viewed as a preprocessing or complementary module for our system rather than a complete registration solution.

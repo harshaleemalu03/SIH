@@ -1,1 +1,1 @@
-Team members = [Sahil Adit, ]
+Team members = [Sahil, Yash]
