@@ -5,10 +5,10 @@
 Pair 3 investigates the scale and multimodal challenges in
 SIH 2026 Problem Statement 26166.
 
-### Person 5
+### Triveni
 Scale variation.
 
-### Person 6
+### Harshalee
 Multimodal correspondence, with primary focus on:
 
 - IIRS ↔ LRO reference imagery
