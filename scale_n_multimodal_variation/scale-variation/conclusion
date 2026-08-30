@@ -1,0 +1,128 @@
+# Experimental Findings and Conclusion
+
+## Objective
+
+The objective of this study was to evaluate the robustness of feature matching algorithms under varying image scales using lunar surface imagery. The experiments were performed on scaled versions of the same image and evaluated using the number of matches, number of inliers, and inlier ratio.
+
+---
+
+## Algorithms Evaluated
+
+1. LoFTR
+2. SuperPoint + LightGlue
+3. SIFT + LightGlue
+
+---
+
+## Results Summary
+
+### LoFTR
+
+LoFTR demonstrated the strongest performance among all tested methods.
+
+Key observations:
+
+- Produced approximately 1936 matches across all tested scales.
+- Achieved 1936 inliers for almost every scale.
+- Maintained an inlier ratio of 1.0 throughout the experiment.
+- Performance remained virtually unaffected by scale variation.
+
+This indicates exceptional scale robustness and highly reliable correspondence estimation.
+
+---
+
+### SuperPoint + LightGlue
+
+SuperPoint-LightGlue showed strong performance across most scales.
+
+Key observations:
+
+- Achieved up to 1984 matches at the original scale.
+- Maintained inlier ratios above 0.97 for almost all scales.
+- Reached perfect inlier ratios (1.0) at several scale factors.
+- Experienced only a small reduction in performance at extreme downscaling (0.25x).
+
+The method proved highly reliable and scalable for lunar image matching.
+
+---
+
+### SIFT + LightGlue
+
+SIFT-LightGlue demonstrated good performance but was more sensitive to extreme scale reduction.
+
+Key observations:
+
+- Achieved up to 1821 matches at the original scale.
+- Maintained near-perfect inlier ratios from 0.75x onward.
+- Performance dropped significantly at 0.25x scale:
+  - 79 matches
+  - 25 inliers
+  - Inlier ratio of 0.316
+
+This suggests that although SIFT retains scale invariance properties, it is less robust than modern deep-learning-based methods under severe scale changes.
+
+---
+
+## Impact of Scale Variation
+
+The experiments revealed the following trends:
+
+### Moderate Scale Changes
+
+For scale factors between:
+
+- 0.5x
+- 0.75x
+- 1.25x
+- 1.5x
+- 2x
+- 3x
+- 4x
+
+all algorithms maintained high matching accuracy.
+
+### Extreme Downscaling
+
+At 0.25x scale:
+
+- SuperPoint-LightGlue retained an inlier ratio of 0.886.
+- SIFT-LightGlue dropped to 0.316.
+- LoFTR remained unaffected.
+
+This demonstrates that extreme downscaling is the most challenging scenario for traditional feature-based methods.
+
+---
+
+## Key Findings
+
+1. LoFTR was the most robust algorithm across all tested scales.
+
+2. SuperPoint-LightGlue provided an excellent balance between match quantity and matching accuracy.
+
+3. SIFT-LightGlue remained effective at moderate scales but showed reduced robustness at extreme downscaling.
+
+4. Deep-learning-based methods consistently outperformed classical feature matching approaches in scale-variation scenarios.
+
+5. Scale variation had minimal impact on LoFTR and only limited impact on SuperPoint-LightGlue.
+
+---
+
+## Future Work
+
+Future studies may include:
+
+- Rotation invariance testing
+- Illumination variation analysis
+- Cross-sensor image matching
+- Large-scale lunar datasets
+- Runtime and memory benchmarking
+- Evaluation of additional transformer-based matchers
+
+---
+
+## Final Conclusion
+
+The study demonstrates that modern feature matching algorithms are highly effective for lunar image matching under scale variations. Among the evaluated methods, LoFTR achieved the best 
+overall performance, maintaining nearly perfect matching quality across all tested scales. SuperPoint-LightGlue also showed excellent robustness and accuracy, while SIFT-LightGlue 
+performed well for moderate scale changes but was less reliable under extreme downscaling. These findings suggest that deep-learning-based matchers are strong candidates for future lunar 
+mapping, planetary image registration, and remote sensing applications.
