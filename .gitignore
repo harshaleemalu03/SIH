@@ -1,1 +1,54 @@
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# OS / Editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Large Datasets & Planetary Data (anchored)
+/data/
+/isis_data/
+/datasets/
 resources/research_papers/
+illumination_variation/data/
+illumination_variation/isis_data/
+illumination_variation/finetune/EfficientLoFTR/data/
+*.cub
+*.img
+*.bsp
+*.tls
+*.tpc
+*.bpc
+
+# Model Weights & Large Binaries
+*.ckpt
+*.pth
+*.pt
+*.bin
+*.onnx
+*.safetensors
+/weights/
+illumination_variation/finetune/EfficientLoFTR/weights/
+
+# Training Logs & Temp Files
+*.log
+logs/
+tb_logs/
+*.tfevents.*
+print.prt
+*.prt
+*.joblog
+*.part
+dump/

@@ -1,0 +1,41 @@
+# Data & Datasets (anchored to prevent ignoring configs/data or src/datasets)
+/data/
+/isis_data/
+/datasets/
+finetune/EfficientLoFTR/data/
+
+# Model weights & Checkpoints
+*.ckpt
+*.pth
+*.pt
+*.bin
+*.onnx
+*.safetensors
+/weights/
+finetune/EfficientLoFTR/weights/
+
+# Training logs & Event files
+*.log
+/logs/
+/tb_logs/
+*.tfevents.*
+finetune/EfficientLoFTR/logs/
+finetune/benchmark_results/
+
+# ISIS / Tool temporary files
+print.prt
+*.prt
+*.joblog
+*.part
+dump/
+
+# Python, Environments, & Caches
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.DS_Store

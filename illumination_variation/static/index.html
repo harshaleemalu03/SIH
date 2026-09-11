@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lunar Image Registration</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<header class="header">
+  <h1>Lunar Image Registration</h1>
+</header>
+
+<main class="container">
+
+  <!-- Inputs -->
+  <section class="inputs" id="inputs">
+    <div class="upload" id="source-box">
+      <div class="upload-label">Source Image</div>
+      <input type="file" id="source-input" accept="image/*" hidden />
+      <div class="drop-area" id="source-drop">
+        <span class="drop-text">Click or drop image</span>
+        <img id="source-preview" class="preview" alt="" />
+        <span id="source-name" class="file-name"></span>
+      </div>
+    </div>
+
+    <div class="upload" id="reference-box">
+      <div class="upload-label">Reference Image</div>
+      <input type="file" id="reference-input" accept="image/*" hidden />
+      <div class="drop-area" id="reference-drop">
+        <span class="drop-text">Click or drop image</span>
+        <img id="reference-preview" class="preview" alt="" />
+        <span id="reference-name" class="file-name"></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button id="register-btn" disabled>Register</button>
+    <span id="hint" class="hint">Select both images to continue</span>
+  </div>
+
+  <!-- Processing -->
+  <div id="processing" class="processing hidden">
+    <div class="processing-label">Processing</div>
+    <div class="bar-track"><div class="bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- Output -->
+  <section id="output" class="output hidden">
+    <div class="metrics" id="metrics">
+      <div class="metric"><span class="metric-label">Matches</span><span class="metric-value" id="m-matches">—</span></div>
+      <div class="metric"><span class="metric-label">Inliers</span><span class="metric-value" id="m-inliers">—</span></div>
+      <div class="metric"><span class="metric-label">Inlier Ratio</span><span class="metric-value" id="m-ratio">—</span></div>
+      <div class="metric"><span class="metric-label">MSE</span><span class="metric-value" id="m-mse">—</span></div>
+    </div>
+    <div class="output-grid">
+      <div class="output-card">
+        <div class="output-title">Matched Points</div>
+        <img id="out-match" alt="Matched points" />
+      </div>
+      <div class="output-card">
+        <div class="output-title">Registered Image</div>
+        <img id="out-registered" alt="Registered image" />
+      </div>
+    </div>
+  </section>
+
+  <div id="error" class="error hidden"></div>
+
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
